@@ -8,15 +8,26 @@ class MoviesController < ApplicationController
 
   def index
     @sortcolumn = params[:sortcolumn]
+    @all_ratings = getAllRatings
 
-    print "****************** #{@sortcolumn} *********************"
-    if(@sortcolumn == "Title")
-       	@movies = Movie.order('title ASC').all
-    elsif(@sortcolumn == "Release Date")
-       	@movies = Movie.order('release_date ASC').all
+    rating_hash = params[:ratings]
+    if(rating_hash != nil)
+	@selected_ratings = rating_hash.keys
     else
-       	@movies = Movie.all
+	@selected_ratings = getAllRatings
     end
+
+    print "**************** #{@selected_ratings} ****************"
+
+    if(@sortcolumn == "Title")
+       	@movies = Movie.where(:rating=> @selected_ratings).order('title ASC')
+    elsif(@sortcolumn == "Release Date")
+       	@movies = Movie.where(:rating=> @selected_ratings).order('release_date ASC').all
+    else
+       	@movies = Movie.where(:rating=> @selected_ratings)
+    end
+
+    
   end
 
   def new
@@ -45,6 +56,10 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+
+  def getAllRatings
+	Movie.select(:rating).map(&:rating).uniq
   end
 
 end

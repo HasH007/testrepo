@@ -11,13 +11,13 @@ class MoviesController < ApplicationController
     @all_ratings = getAllRatings
 
     rating_hash = params[:ratings]
+    print "**************** #{rating_hash.class} ****************"
+
     if(rating_hash != nil)
-	@selected_ratings = rating_hash.keys
+	@selected_ratings = (rating_hash.class == String) ? rating_hash.split(" ") : rating_hash.keys
     else
 	@selected_ratings = getAllRatings
     end
-
-    print "**************** #{@selected_ratings} ****************"
 
     if(@sortcolumn == "Title")
        	@movies = Movie.where(:rating=> @selected_ratings).order('title ASC')

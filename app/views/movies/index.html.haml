@@ -12,9 +12,9 @@
 %table#movies
   %thead
     %tr
-      %th{:class=> @sortcolumn=="Title" ? "hilite" : ""}= link_to "Movie Title", movies_path(:sortcolumn=>"Title"), :id=>"title_header", :class=>"hilite"
+      %th{:class=> @sortcolumn=="Title" ? "hilite" : ""}= link_to "Movie Title", movies_path(:sortcolumn=>"Title", :ratings=>@selected_ratings.join(" ")), :id=>"title_header", :class=>"hilite"
       %th Rating
-      %th{:class=> @sortcolumn=="Release Date" ? "hilite" : ""}= link_to "Release Date", movies_path(:sortcolumn=>"Release Date"), :id=>"release_date_header"
+      %th{:class=> @sortcolumn=="Release Date" ? "hilite" : ""}= link_to "Release Date", movies_path(:sortcolumn=>"Release Date", :ratings=>@selected_ratings.join(" ")), :id=>"release_date_header"
       %th More Info
   %tbody
     - @movies.each do |movie|
@@ -25,4 +25,3 @@
         %td= link_to "More about #{movie.title}", movie_path(movie)
 
 = link_to 'Add new movie', new_movie_path
-= hidden_field_tag "ratings", @all_ratings

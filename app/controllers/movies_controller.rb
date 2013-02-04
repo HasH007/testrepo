@@ -10,14 +10,32 @@ class MoviesController < ApplicationController
     @sortcolumn = params[:sortcolumn]
     @all_ratings = getAllRatings
 
+
     rating_hash = params[:ratings]
     print "**************** #{rating_hash.class} ****************"
 
+    if(rating_hash == nil && @sortcolumn == nil)
+	if(session[:sc] != nil || session[:sr] != nil)
+	    flash.keep
+	    if(session[:sc] != nil && session[:sr] != nil)
+		redirect_to movies_path(:sortcolumn=>session[:sc], :ratings=>session[:sr].join(" "))
+	    elsif(session[:sc] != nil)
+		redirect_to movies_path(:sortcolumn=>session[:sc])
+	    else
+		redirect_to movies_path(:ratings=>session[:sr].join(" "))
+	    end
+	end
+    end
+
     if(rating_hash != nil)
+	print "**************** #{rating_hash.class} ****************"
 	@selected_ratings = (rating_hash.class == String) ? rating_hash.split(" ") : rating_hash.keys
     else
 	@selected_ratings = getAllRatings
     end
+
+    session[:sc] = @sortcolumn
+    session[:sr] = @selected_ratings
 
     if(@sortcolumn == "Title")
        	@movies = Movie.where(:rating=> @selected_ratings).order('title ASC')
@@ -25,9 +43,7 @@ class MoviesController < ApplicationController
        	@movies = Movie.where(:rating=> @selected_ratings).order('release_date ASC').all
     else
        	@movies = Movie.where(:rating=> @selected_ratings)
-    end
-
-    
+    end   
   end
 
   def new
